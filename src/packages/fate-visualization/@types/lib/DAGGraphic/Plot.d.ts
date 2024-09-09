@@ -1,0 +1,63 @@
+type TagCreator = (d: object) => string | Selection;
+type TextCreator = (d: object) => string;
+interface TagParameter<P extends object, A extends object, S extends object, E extends object> {
+    id: string;
+    tag: string | Selection | TagCreator;
+    append?: boolean;
+    prop?: P;
+    attr?: A;
+    style?: S;
+    event?: E;
+    text?: string | TextCreator;
+    parent?: Plot<object, object, object, object> | Selection;
+    children?: TagParameter<object, object, object, object>[];
+}
+export type PlotCommon = Plot<any, any, any, any>;
+export type EventCallback = (event: any, tag: PlotCommon) => void;
+export default class Plot<P extends object, A extends object, S extends object, E extends object> {
+    id: string;
+    tag: string | Selection | TagCreator | undefined;
+    prop: P;
+    attr: A;
+    style: S;
+    event: E;
+    text?: string | TextCreator;
+    append: boolean;
+    parent?: Plot<object, object, object, object> | Selection;
+    children: Map<string, Plot<object, object, object, object>>;
+    dom: any;
+    protected updateOperation: any;
+    protected updating: (operation: (selection: any) => unknown, duration?: number, end?: (event: any) => void, interrupt?: (event: any) => void) => void;
+    protected updateThrottle: import("lodash").DebouncedFuncLeading<() => void>;
+    constructor({ id, tag, prop, attr, style, event, text, append, parent, children, }: TagParameter<P, A, S, E>);
+    setTag(tag: string | Selection | TagCreator, duration?: number | undefined, end?: (event: any, plot: PlotCommon) => void, interrupt?: (event: any, plot: PlotCommon) => void): void;
+    protected tagRender(): void;
+    setProp(key: string, value: unknown, duration?: number | undefined, end?: (event: any, plot: PlotCommon) => void, interrupt?: (event: any, plot: PlotCommon) => void): void;
+    setProps(update: object, duration?: number | undefined, end?: (event: any, plot: PlotCommon) => void, interrupt?: (event: any, plot: PlotCommon) => void): void;
+    protected propRender(selection?: any): void;
+    setAttr(key: string, value: unknown, duration?: number | undefined, end?: (event: any, plot: PlotCommon) => void, interrupt?: (event: any, plot: PlotCommon) => void): void;
+    setAttrs(update: object, duration?: number | undefined, end?: (event: any, plot: PlotCommon) => void, interrupt?: (event: any, plot: PlotCommon) => void): void;
+    protected attrRender(selection: any, attr: object): void;
+    setStyle(key: string, value: unknown, duration?: number | undefined, end?: (event: any, plot: PlotCommon) => void, interrupt?: (event: any, plot: PlotCommon) => void): void;
+    setStyles(update: object, duration?: number | undefined, end?: (event: any, plot: PlotCommon) => void, interrupt?: (event: any, plot: PlotCommon) => void): void;
+    protected styleRender(selection: any, styles: object): void;
+    setText(text: string | TextCreator): void;
+    protected txRender(): void;
+    setEvent(trigger: string, event: EventCallback): void;
+    setEvents(triggers: object): void;
+    dispatch(trigger: string, detail?: any, end?: EventCallback): void;
+    dispatchDeep(trigger: string, detail?: any, end?: EventCallback): void;
+    protected eventRender(event: object): void;
+    remove(): void;
+    setParent(parent?: PlotCommon): undefined;
+    setChild(child: TagParameter<any, any, any, any> | PlotCommon): void;
+    setChildren(children: Array<TagParameter<any, any, any, any> | PlotCommon>): void;
+    removeChild(key: string | PlotCommon): void;
+    find(id: string | ((comp: any) => boolean)): any;
+    findAll(id: string | ((comp: any) => boolean)): any[];
+    root(): any;
+    rootPlot(): PlotCommon;
+    release(): void;
+}
+export {};
+//# sourceMappingURL=Plot.d.ts.map
